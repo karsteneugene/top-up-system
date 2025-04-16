@@ -9,21 +9,270 @@
     "host": "localhost:3000",
     "basePath": "/api",
     "paths": {
+        "/transactions/topup/direct/{id}": {
+            "post": {
+                "description": "Top up wallet directly",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Top up wallet directly",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Wallet ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Amount to top up",
+                        "name": "amount",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TransactionAmount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/wallet/{id}": {
+            "get": {
+                "description": "Get transactions by wallet ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get transactions by wallet ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Wallet ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
-                "description": "Get users",
+                "description": "Get all users",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Get users",
+                "summary": "Get all users",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Get user by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets": {
+            "get": {
+                "description": "Get all wallets",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Get all wallets",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/user/{id}": {
+            "get": {
+                "description": "Get wallet by User ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Get wallet by User ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/{id}": {
+            "get": {
+                "description": "Get wallet by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Get wallet by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Wallet ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -31,17 +280,11 @@
         }
     },
     "definitions": {
-        "models.User": {
+        "models.TransactionAmount": {
             "type": "object",
             "properties": {
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
+                "amount": {
                     "type": "integer"
-                },
-                "last_name": {
-                    "type": "string"
                 }
             }
         }

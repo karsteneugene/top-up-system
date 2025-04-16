@@ -10,11 +10,17 @@ const (
 )
 
 type Transaction struct {
-	ID          int             `json:"id" gorm:"primaryKey"`
-	Amount      int             `json:"amount" gorm:"not null"`
-	CreatedAt   time.Time       `json:"created_at" gorm:"autoCreateTime"`
-	Type        TransactionType `json:"type" gorm:"not null"`
-	Description string          `json:"description"`
-	WalletID    int             `json:"wallet_id" gorm:"not null"`
-	Wallet      Wallet          `json:"wallet" gorm:"foreignKey:WalletID;references:ID"`
+	ID            int             `json:"id" gorm:"primaryKey;autoIncrement"`
+	Amount        int             `json:"amount" gorm:"not null"`
+	CreatedAt     time.Time       `json:"created_at" gorm:"autoCreateTime"`
+	Type          TransactionType `json:"type" gorm:"not null"`
+	RecipientBank string          `json:"recipient_bank"`
+	RecipientName string          `json:"recipient_name"`
+	Description   string          `json:"description"`
+	WalletID      int             `json:"wallet_id" gorm:"not null"`
+	Wallet        Wallet          `json:"-" gorm:"foreignKey:WalletID;references:ID"`
+}
+
+type TransactionAmount struct {
+	Amount int `json:"amount" gorm:"not null"`
 }

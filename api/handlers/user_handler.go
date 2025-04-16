@@ -5,18 +5,45 @@ import (
 	"github.com/karsteneugene/top-up-system/api/models"
 )
 
-// GetUsers godoc
-// @Summary Get users
-// @Description Get users
+// GetAllUsers godoc
+// @Summary Get all users
+// @Description Get all users
 // @Tags users
 // @Produce json
-// @Success 200 {object} models.User
+// @Success 200 {string} string
+// @Failure 404 {string} string
+// @Failure 500 {string} string
 // @Router /users [get]
-func GetUsers(c *fiber.Ctx) error {
-	user := models.User{
-		ID:        1,
-		FirstName: "John",
-		LastName:  "Doe",
+func GetAllUsers(c *fiber.Ctx) error {
+	var users []models.User
+
+	// Get all users and check if there are any problems with the database
+	if err := db.Find(&users).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"success": false, "message": "Error retrieving users"})
 	}
-	return c.JSON(user)
+	// Check if users is empty
+	if len(users) == 0 {
+		return c.Status(404).JSON(fiber.Map{"success": false, "message": "No users found"})
+	}
+	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"users": users}})
+}
+
+// GetUserByID godoc
+// @Summary Get user by ID
+// @Description Get user by ID
+// @Tags users
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {string} string
+// @Failure 404 {string} string
+// @Router /users/{id} [get]
+func GetUserByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var user models.User
+
+	// Check if there is a user with the given ID
+	if err := db.First(&user, id).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"success": false, "message": "User not found"})
+	}
+	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"user": user}})
 }

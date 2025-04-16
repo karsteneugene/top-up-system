@@ -8,9 +8,21 @@ import (
 func Api() *fiber.App {
 	app := fiber.New()
 
+	// Define base API route
 	api := app.Group("/api")
 
-	api.Get("/users", handlers.GetUsers)
+	// User routes
+	api.Get("/users", handlers.GetAllUsers)
+	api.Get("/users/:id", handlers.GetUserByID)
+
+	// Wallet routes
+	api.Get("/wallets", handlers.GetAllWallets)
+	api.Get("/wallets/:id", handlers.GetWalletByID)
+	api.Get("/wallets/user/:id", handlers.GetWalletByUserID)
+
+	// Transaction routes
+	api.Get("/transactions/wallet/:id", handlers.GetTransactionsByWalletID)
+	api.Post(("/transactions/topup/direct/:id"), handlers.TopUpDirect)
 
 	return app
 }

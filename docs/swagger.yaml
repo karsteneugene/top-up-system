@@ -1,13 +1,9 @@
 basePath: /api
 definitions:
-  models.User:
+  models.TransactionAmount:
     properties:
-      first_name:
-        type: string
-      id:
+      amount:
         type: integer
-      last_name:
-        type: string
     type: object
 host: localhost:3000
 info:
@@ -16,17 +12,181 @@ info:
   title: Top Up System API
   version: "1.0"
 paths:
-  /users:
-    get:
-      description: Get users
+  /transactions/topup/direct/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Top up wallet directly
+      parameters:
+      - description: Wallet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Amount to top up
+        in: body
+        name: amount
+        required: true
+        schema:
+          $ref: '#/definitions/models.TransactionAmount'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
-      summary: Get users
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Top up wallet directly
+      tags:
+      - transactions
+  /transactions/wallet/{id}:
+    get:
+      description: Get transactions by wallet ID
+      parameters:
+      - description: Wallet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get transactions by wallet ID
+      tags:
+      - transactions
+  /users:
+    get:
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get all users
       tags:
       - users
+  /users/{id}:
+    get:
+      description: Get user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get user by ID
+      tags:
+      - users
+  /wallets:
+    get:
+      description: Get all wallets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get all wallets
+      tags:
+      - wallets
+  /wallets/{id}:
+    get:
+      description: Get wallet by ID
+      parameters:
+      - description: Wallet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get wallet by ID
+      tags:
+      - wallets
+  /wallets/user/{id}:
+    get:
+      description: Get wallet by User ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get wallet by User ID
+      tags:
+      - wallets
 swagger: "2.0"

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"log"
 	"time"
 
 	"github.com/karsteneugene/top-up-system/api/models"
@@ -16,7 +17,11 @@ var (
 )
 
 func init() {
-	db = setting.Database()
+	var err error
+	db, err = setting.Connect()
+	if err != nil {
+		log.Panicln("Failed to connect to database:", err.Error())
+	}
 }
 
 func CheckMinMaxTopUp(amount int) (bool, string) {

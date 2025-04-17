@@ -48,6 +48,8 @@ func TopUpDirect(c *fiber.Ctx) error {
 
 	transaction := new(models.Transaction)
 
+	wallet := new(models.Wallet)
+
 	// Parse request body to get amount
 	if err := c.BodyParser(amount); err != nil {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": "Invalid request"})
@@ -61,6 +63,11 @@ func TopUpDirect(c *fiber.Ctx) error {
 
 	// Set transaction type to DIRECT
 	transaction.Type = models.TransactionTopUpDirect
+
+	// Check if wallet exists
+	if err := db.First(&wallet, transaction.WalletID).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
+	}
 
 	// Check if amount is more than minimum top up amount
 	validMinMax, err := utils.CheckMinMaxTopUp(transaction.Amount)
@@ -83,14 +90,6 @@ func TopUpDirect(c *fiber.Ctx) error {
 	// Create transaction
 	if err := db.Create(&transaction).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"success": false, "message": "Error creating transaction"})
-	}
-
-	// Update wallet balance
-	var wallet models.Wallet
-
-	// Check if wallet exists
-	if err := db.First(&wallet, transaction.WalletID).Error; err != nil {
-		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}
 
 	// Add amount to wallet balance

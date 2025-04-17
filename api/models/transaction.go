@@ -21,6 +21,13 @@ type Transaction struct {
 	Wallet        Wallet          `json:"-" gorm:"foreignKey:WalletID;references:ID"`
 }
 
+// Used for the body of direct top-up
 type TransactionAmount struct {
 	Amount int `json:"amount" gorm:"not null"`
+}
+
+// Used for getting the total transactions amount
+type TransactionTotal struct {
+	Amount   int `json:"amount" gorm:"not null"`
+	WalletID int `json:"wallet_id" gorm:"not null"`
 }

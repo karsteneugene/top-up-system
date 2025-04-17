@@ -61,6 +61,7 @@ func GetWalletByUserID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var wallet models.Wallet
 
+	// Check if there is a wallet with the given User ID
 	if err := db.Where("user_id = ?", id).First(&wallet).Error; err != nil {
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}

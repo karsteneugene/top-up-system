@@ -69,7 +69,7 @@ func TopUpDirect(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}
 
-	// Check if amount is more than minimum top up amount
+	// Check if amount is more than minimum or less than maximum top up amount
 	validMinMax, err := utils.CheckMinMaxTopUp(transaction.Amount)
 	if !validMinMax {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": err})

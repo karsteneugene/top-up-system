@@ -8,9 +8,9 @@ import (
 
 var dbConn *gorm.DB
 
-func Connect() (*gorm.DB, error) {
+func Connect(dsn string) (*gorm.DB, error) {
 	// Connect to the database
-	dbConn, err := gorm.Open(sqlite.Open("ewallet.db"), &gorm.Config{})
+	dbConn, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}

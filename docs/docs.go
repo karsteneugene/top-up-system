@@ -15,6 +15,65 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/transactions/topup/bank/{va}": {
+            "post": {
+                "description": "Top up wallet via bank transfer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Top up wallet via bank transfer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Virtual Account Number",
+                        "name": "va",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Bank transaction request",
+                        "name": "bank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BankTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/topup/direct/{id}": {
             "post": {
                 "description": "Top up wallet directly",
@@ -249,6 +308,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/wallets/va/{id}": {
+            "get": {
+                "description": "Get virtual account by Wallet ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Get virtual account by Wallet ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Wallet ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/wallets/{id}": {
             "get": {
                 "description": "Get wallet by ID",
@@ -286,6 +380,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.BankTransactionRequest": {
+            "type": "object",
+            "properties": {
+                "account_number": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "integer"
+                },
+                "bank_code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
         "models.TransactionAmount": {
             "type": "object",
             "properties": {

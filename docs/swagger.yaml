@@ -1,5 +1,16 @@
 basePath: /api
 definitions:
+  models.BankTransactionRequest:
+    properties:
+      account_number:
+        type: string
+      amount:
+        type: integer
+      bank_code:
+        type: string
+      description:
+        type: string
+    type: object
   models.TransactionAmount:
     properties:
       amount:
@@ -12,6 +23,45 @@ info:
   title: Top Up System API
   version: "1.0"
 paths:
+  /transactions/topup/bank/{va}:
+    post:
+      consumes:
+      - application/json
+      description: Top up wallet via bank transfer
+      parameters:
+      - description: Virtual Account Number
+        in: path
+        name: va
+        required: true
+        type: integer
+      - description: Bank transaction request
+        in: body
+        name: bank
+        required: true
+        schema:
+          $ref: '#/definitions/models.BankTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Top up wallet via bank transfer
+      tags:
+      - transactions
   /transactions/topup/direct/{id}:
     post:
       consumes:
@@ -187,6 +237,29 @@ paths:
           schema:
             type: string
       summary: Get wallet by User ID
+      tags:
+      - wallets
+  /wallets/va/{id}:
+    get:
+      description: Get virtual account by Wallet ID
+      parameters:
+      - description: Wallet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get virtual account by Wallet ID
       tags:
       - wallets
 swagger: "2.0"

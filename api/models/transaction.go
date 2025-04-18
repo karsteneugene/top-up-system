@@ -21,6 +21,13 @@ type Transaction struct {
 	Wallet        Wallet          `json:"-" gorm:"foreignKey:WalletID;references:ID"`
 }
 
+type BankTransactionRequest struct {
+	BankCode      string `json:"bank_code" gorm:"not null"`
+	Amount        int    `json:"amount" gorm:"not null"`
+	AccountNumber string `json:"account_number" gorm:"not null"`
+	Description   string `json:"description"`
+}
+
 // Used for the body of direct top-up
 type TransactionAmount struct {
 	Amount int `json:"amount" gorm:"not null"`

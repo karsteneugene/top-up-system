@@ -67,3 +67,23 @@ func GetWalletByUserID(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"wallet": wallet}})
 }
+
+// GetVirtualAccountByWalletID godoc
+// @Summary Get virtual account by Wallet ID
+// @Description Get virtual account by Wallet ID
+// @Tags wallets
+// @Produce json
+// @Param id path int true "Wallet ID"
+// @Success 200 {string} string
+// @Failure 404 {string} string
+// @Router /wallets/va/{id} [get]
+func GetVirtualAccountByWalletID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var wallet models.Wallet
+
+	// Check if there is a wallet with the given ID
+	if err := db.First(&wallet, id).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
+	}
+	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"virtual_account": wallet.VirtualAccount}})
+}

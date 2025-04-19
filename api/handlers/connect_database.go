@@ -7,6 +7,7 @@ import (
 
 var db *gorm.DB
 
+// Initialize database connection for handlers
 func init() {
 	var err error
 	db, err = setting.Connect("ewallet.db")
@@ -15,6 +16,7 @@ func init() {
 	}
 }
 
+// Sets which database to use for handlers (used for unit testing to switch database into memory)
 func SetDB(database *gorm.DB) {
 	db = database
 }

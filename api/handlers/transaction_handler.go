@@ -19,12 +19,12 @@ import (
 // @Failure 500 {string} string
 // @Router /transactions/wallet/{id} [get]
 func GetTransactionsByWalletID(c *fiber.Ctx) error {
-	id := c.Params("id")
 	var transactions []models.Transaction
+	id := c.Params("id")
 
-	// Check if there are transactions for the given wallet ID
-	if err := db.Where("wallet_id = ?", id).Find(&transactions).Error; err != nil {
-		return c.Status(404).JSON(fiber.Map{"success": false, "message": "No transactions found"})
+	// Query transactions by wallet ID
+	if err := db.Where("wallet_id = ?", id).Find(&transactions).Error; err != nil { // Checks if wallet exists
+		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}
 	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"transactions": transactions}})
 }
@@ -45,43 +45,37 @@ func GetTransactionsByWalletID(c *fiber.Ctx) error {
 func TopUpDirect(c *fiber.Ctx) error {
 
 	amount := new(models.TransactionAmount)
-
 	transaction := new(models.Transaction)
-
 	wallet := new(models.Wallet)
 
-	// Parse request body to get amount
+	transaction.WalletID, _ = strconv.Atoi(c.Params("id"))
+
+	// Get amount from request body
 	if err := c.BodyParser(amount); err != nil {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": "Invalid request"})
 	}
 
-	// Get wallet ID from URL parameter
-	transaction.WalletID, _ = strconv.Atoi(c.Params("id"))
-
-	// Set transaction amount
 	transaction.Amount = amount.Amount
-
-	// Set transaction type to DIRECT
 	transaction.Type = models.TransactionTopUpDirect
 
-	// Check if wallet exists
-	if err := db.First(&wallet, transaction.WalletID).Error; err != nil {
+	// Query wallet by given ID
+	if err := db.First(&wallet, transaction.WalletID).Error; err != nil { // Check if wallet exists
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}
 
-	// Check if amount is more than minimum or less than maximum top up amount
+	// Check amount >= minimum or < maximum top up amount
 	validMinMax, err := utils.CheckMinMaxTopUp(transaction.Amount)
 	if !validMinMax {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": err})
 	}
 
-	// Check if amount is less than daily limit
+	// Check amount < daily limit
 	validDaily, err := utils.CheckDailyLimit(transaction.Amount, transaction.WalletID)
 	if !validDaily {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": err})
 	}
 
-	// Check if amount is less than monthly limit
+	// Check amount < monthly limit
 	validMonthly, err := utils.CheckMonthlyLimit(transaction.Amount, transaction.WalletID)
 	if !validMonthly {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": err})
@@ -95,7 +89,7 @@ func TopUpDirect(c *fiber.Ctx) error {
 	// Add amount to wallet balance
 	wallet.Balance += transaction.Amount
 
-	// Save updated balance
+	// Update balance
 	if err := db.Save(&wallet).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"success": false, "message": "Error updating wallet"})
 	}
@@ -116,31 +110,30 @@ func TopUpDirect(c *fiber.Ctx) error {
 // @Failure 500 {string} string
 // @Router /transactions/topup/bank/{va} [post]
 func TopUpBank(c *fiber.Ctx) error {
+
 	request := new(models.BankTransactionRequest)
-
 	wallet := new(models.Wallet)
-
 	transaction := new(models.Transaction)
 
-	// Parse request body to get bank transaction request
+	va := c.Params("va")
+
+	// Get request body
 	if err := c.BodyParser(request); err != nil {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": "Invalid request"})
 	}
 
-	// Get virtual account number from URL parameter
-	va := c.Params("va")
-
-	// Check if virtual account number is valid
-	if err := db.Where("virtual_account = ?", va).First(&wallet).Error; err != nil {
+	// Query wallet by virtual account number
+	if err := db.Where("virtual_account = ?", va).First(&wallet).Error; err != nil { // Check if virtual account exists
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Virtual account not found"})
 	}
 
+	// Validate bank code
 	valid, resBank := utils.ValidateBank(request.BankCode)
 	if !valid {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": resBank})
 	}
 
-	// Check if account number is valid
+	// Validate account number
 	valid, resAccount := utils.ValidateAccountNumber(request.AccountNumber)
 	if !valid {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": resAccount})
@@ -153,19 +146,19 @@ func TopUpBank(c *fiber.Ctx) error {
 	transaction.WalletID = wallet.ID
 	transaction.Description = request.Description
 
-	// Check if amount is more than minimum or less than maximum top up amount
+	// Check amount >= minimum or < maximum top up amount
 	validMinMax, err := utils.CheckMinMaxTopUp(transaction.Amount)
 	if !validMinMax {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": err})
 	}
 
-	// Check if amount is less than daily limit
+	// Check amount < daily limit
 	validDaily, err := utils.CheckDailyLimit(transaction.Amount, transaction.WalletID)
 	if !validDaily {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": err})
 	}
 
-	// Check if amount is less than monthly limit
+	// Check amount < monthly limit
 	validMonthly, err := utils.CheckMonthlyLimit(transaction.Amount, transaction.WalletID)
 	if !validMonthly {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": err})
@@ -179,7 +172,7 @@ func TopUpBank(c *fiber.Ctx) error {
 	// Add amount to wallet balance
 	wallet.Balance += transaction.Amount
 
-	// Save updated balance
+	// Update balance
 	if err := db.Save(&wallet).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"success": false, "message": "Error updating wallet"})
 	}

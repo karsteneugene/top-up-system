@@ -38,11 +38,11 @@ func GetAllUsers(c *fiber.Ctx) error {
 // @Failure 404 {string} string
 // @Router /users/{id} [get]
 func GetUserByID(c *fiber.Ctx) error {
-	id := c.Params("id")
 	var user models.User
+	id := c.Params("id")
 
-	// Check if there is a user with the given ID
-	if err := db.First(&user, id).Error; err != nil {
+	// Query user by ID
+	if err := db.First(&user, id).Error; err != nil { // Check if user exists
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "User not found"})
 	}
 	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"user": user}})

@@ -13,6 +13,7 @@ func main() {
 	var amount int
 	var description string
 
+	// User input for virtual account number, amount, and description
 	fmt.Print("Enter virtual account number: ")
 	fmt.Scan(&va)
 
@@ -22,6 +23,7 @@ func main() {
 	fmt.Print("Enter description (leave blank for empty): ")
 	fmt.Scanln(&description)
 
+	// Request body
 	body := map[string]interface{}{
 		"account_number": "1234567890",
 		"amount":         amount,
@@ -34,8 +36,10 @@ func main() {
 		fmt.Println("Error marshalling JSON:", err)
 		return
 	}
+
 	endpoint := "http://localhost:3000/api/transactions/topup/bank/" + fmt.Sprint(va)
 
+	// Make the HTTP POST request
 	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(jsonBody))
 	if err != nil {
 		fmt.Println("Error making request:", err)
@@ -43,6 +47,7 @@ func main() {
 	}
 	defer resp.Body.Close()
 
+	// Get response body (for debugging)
 	var result map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		fmt.Println("Error decoding response:", err)

@@ -21,6 +21,7 @@ import (
 var testDB *gorm.DB
 
 func setupTestDB() (*gorm.DB, error) {
+
 	// Initialize in-memory SQLite database
 	var err error
 	testDB, err = setting.Connect(":memory:")
@@ -38,6 +39,7 @@ func setupTestDB() (*gorm.DB, error) {
 }
 
 func TestMain(m *testing.M) {
+
 	// Setup test database
 	var err error
 	testDB, err = setupTestDB()
@@ -45,7 +47,7 @@ func TestMain(m *testing.M) {
 		panic("failed to connect to database")
 	}
 
-	// Set the database connection for handlers
+	// Set the database connection for handlers and rate limiters
 	handlers.SetDB(testDB)
 	utils.SetDB(testDB)
 
@@ -63,10 +65,11 @@ func TestMain(m *testing.M) {
 }
 
 func TestTopUpDirect(t *testing.T) {
+
 	// Initialize Fiber for testing
 	app := fiber.New()
 	api := app.Group("/api")
-	api.Post("/transactions/topup/direct/:id", handlers.TopUpDirect)
+	api.Post("/transactions/topup/direct/:id", handlers.TopUpDirect) // Endpoint to test
 
 	// Seed users, wallets, and transactions for testing
 	user1 := models.User{ // To test: successful top up, wallet not found, minimum and maximum top up amount
@@ -104,14 +107,14 @@ func TestTopUpDirect(t *testing.T) {
 		UserID:         3,
 	}
 
-	transactionDailyLimit := models.Transaction{
-		Amount:   5000000,
+	transactionDailyLimit := models.Transaction{ // To test: daily limit
+		Amount:   5000000, // Set to the daily transaction limit
 		Type:     models.TransactionTopUpDirect,
 		WalletID: 2,
 	}
-	transactionMonthlyLimit := models.Transaction{
-		Amount:    20000000,
-		CreatedAt: time.Now().AddDate(0, 0, -1),
+	transactionMonthlyLimit := models.Transaction{ // To test: monthly limit
+		Amount:    20000000,                     // Set to the monthly transaction limit
+		CreatedAt: time.Now().AddDate(0, 0, -1), // Set to a day before to avoid daily limit
 		Type:      models.TransactionTopUpDirect,
 		WalletID:  3,
 	}
@@ -127,6 +130,7 @@ func TestTopUpDirect(t *testing.T) {
 
 	// Test case: Successful direct top up
 	t.Run("Successful direct top up", func(t *testing.T) {
+
 		// Request body
 		requestBody := `{"amount": 50000}`
 
@@ -162,6 +166,7 @@ func TestTopUpDirect(t *testing.T) {
 
 	// Test case: Wallet not found
 	t.Run("Wallet not found", func(t *testing.T) {
+
 		// Request body
 		requestBody := `{"amount": 50000}`
 
@@ -186,6 +191,7 @@ func TestTopUpDirect(t *testing.T) {
 
 	// Test case: Less than minimum top up amount
 	t.Run("Less than minimum top up amount", func(t *testing.T) {
+
 		// Request body
 		requestBody := `{"amount": 500}`
 
@@ -210,6 +216,7 @@ func TestTopUpDirect(t *testing.T) {
 
 	// Test case: Exceeds maximum top up amount
 	t.Run("Exceeds maximum top up amount", func(t *testing.T) {
+
 		// Request body
 		requestBody := `{"amount": 3000000}`
 
@@ -234,6 +241,7 @@ func TestTopUpDirect(t *testing.T) {
 
 	// Test case: Daily limit exceeded
 	t.Run("Daily limit exceeded", func(t *testing.T) {
+
 		// Request body
 		requestBody := `{"amount": 1000000}`
 
@@ -258,6 +266,7 @@ func TestTopUpDirect(t *testing.T) {
 
 	// Test case: Monthly limit exceeded
 	t.Run("Monthly limit exceeded", func(t *testing.T) {
+
 		// Request body
 		requestBody := `{"amount": 1000000}`
 

@@ -21,10 +21,7 @@ func GetAllWallets(c *fiber.Ctx) error {
 	if err := db.Find(&wallets).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"success": false, "message": "Error retrieving wallets"})
 	}
-	// Check if wallets is empty
-	if len(wallets) == 0 {
-		return c.Status(404).JSON(fiber.Map{"success": false, "message": "No wallets found"})
-	}
+
 	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"wallets": wallets}})
 }
 
@@ -38,11 +35,11 @@ func GetAllWallets(c *fiber.Ctx) error {
 // @Failure 404 {string} string
 // @Router /wallets/{id} [get]
 func GetWalletByID(c *fiber.Ctx) error {
-	id := c.Params("id")
 	var wallet models.Wallet
+	id := c.Params("id")
 
-	// Check if there is a wallet with the given ID
-	if err := db.First(&wallet, id).Error; err != nil {
+	// Query wallet by ID
+	if err := db.First(&wallet, id).Error; err != nil { // Check is wallet exists
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}
 	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"wallet": wallet}})
@@ -58,11 +55,11 @@ func GetWalletByID(c *fiber.Ctx) error {
 // @Failure 404 {string} string
 // @Router /wallets/user/{id} [get]
 func GetWalletByUserID(c *fiber.Ctx) error {
-	id := c.Params("id")
 	var wallet models.Wallet
+	id := c.Params("id")
 
-	// Check if there is a wallet with the given User ID
-	if err := db.Where("user_id = ?", id).First(&wallet).Error; err != nil {
+	// Query wallet by User ID
+	if err := db.Where("user_id = ?", id).First(&wallet).Error; err != nil { // Check if wallet exists
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}
 	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"wallet": wallet}})
@@ -78,11 +75,11 @@ func GetWalletByUserID(c *fiber.Ctx) error {
 // @Failure 404 {string} string
 // @Router /wallets/va/{id} [get]
 func GetVirtualAccountByWalletID(c *fiber.Ctx) error {
-	id := c.Params("id")
 	var wallet models.Wallet
+	id := c.Params("id")
 
-	// Check if there is a wallet with the given ID
-	if err := db.First(&wallet, id).Error; err != nil {
+	// Query virtual account number by Wallet ID
+	if err := db.First(&wallet, id).Error; err != nil { // Check if wallet exists
 		return c.Status(404).JSON(fiber.Map{"success": false, "message": "Wallet not found"})
 	}
 	return c.JSON(fiber.Map{"success": true, "payload": fiber.Map{"virtual_account": wallet.VirtualAccount}})

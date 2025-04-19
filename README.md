@@ -12,6 +12,10 @@ E-Wallet Top Up System is a simple simulation of an e-wallet top up system, whic
 7. [Troubleshooting](#troubleshooting)
 
     7.1 [CGO / gcc / C compiler error](#cgo--gcc--c-compiler-error)
+    
+    7.1.1 [Windows](#windows)
+
+    7.1.2 [Linux](#linux)
 
 ## Features
 
@@ -136,6 +140,25 @@ If you try to run the application again and get this error:
     # runtime/cgo
     cgo: C compiler "gcc" not found: exec: "gcc": executable file not found in %PATH%
 
-That means gcc is not installed on your machine. For my Windows machine, I installed [TDM-GCC](https://jmeubank.github.io/tdm-gcc/) as I feel like it's the simplest one. TDM-GCC should add itself to PATH when installing with defualt settings.
+That means gcc is not installed on your machine. 
+
+#### Windows
+
+For my Windows machine, I installed [TDM-GCC](https://jmeubank.github.io/tdm-gcc/) as I feel like it's the simplest one. TDM-GCC should add itself to PATH when installing with defualt settings.
 
 Now restart your console and you should be able to run the application now.
+
+
+#### Linux
+
+For my Ubuntu that was run in WSL, I ran this command:
+
+    sudo apt-get install build-essential
+
+If there was an error retrieving some files, run this command:
+
+    sudo apt-get update
+
+and then rerun the first command to install build-essential.
+
+The application should be able to run now.

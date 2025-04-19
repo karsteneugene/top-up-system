@@ -35,8 +35,8 @@ func SetDB(database *gorm.DB) {
 // Per transaction limit
 func CheckMinMaxTopUp(amount int) (bool, string) {
 
-	// Check amount <= minimum top-up amount
-	if amount <= 1000 {
+	// Check amount < minimum top-up amount
+	if amount < 1000 {
 		return false, "Amount is less than the minimum top up limit of Rp 1,000"
 	}
 

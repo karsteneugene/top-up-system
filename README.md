@@ -2,6 +2,17 @@
 
 E-Wallet Top Up System is a simple simulation of an e-wallet top up system, which tries to mimic the flow of popular e-wallets in Indonesia. This is a small project that utilizes Go (Golang) to build a REST API backend system.
 
+## Table of Content
+1. [Features](#features)
+2. [Technologies](#technologies)
+3. [Setup](#setup)
+4. [Simulating Direct E-Wallet Top Up](#simulating-direct-e-wallet-top-up)
+5. [Simulating Top Up from Bank](#simulating-top-up-from-bank)
+6. [Unit Testing](#unit-testing)
+7. [Troubleshooting](#troubleshooting)
+
+    7.1 [CGO / gcc / C compiler error](#cgo--gcc--c-compiler-error)
+
 ## Features
 
 - Direct top up simulation
@@ -107,3 +118,24 @@ This tests for:
 - Exceeds the maximum top up amount per transaction (Amount higher than Rp 2,000,000)
 - Exceeds daily limit (Total transactions will exceed or are exceeding Rp 5,000,000)
 - Exceeds monthly limit (Total transactions will exceed or are exceeding Rp 20,000,000)
+
+## Troubleshooting
+
+### CGO / gcc / C compiler error  
+
+When trying to run the application and you get this error:
+
+    failed to initialize database, got error Binary was compiled with 'CGO_ENABLED=0', go-sqlite3 requires cgo to work. This is a stub
+
+Proceed to type this inside the console:
+
+    go env -w CGO_ENABLED=1
+
+If you try to run the application again and get this error:
+
+    # runtime/cgo
+    cgo: C compiler "gcc" not found: exec: "gcc": executable file not found in %PATH%
+
+That means gcc is not installed on your machine. For my Windows machine, I installed [TDM-GCC](https://jmeubank.github.io/tdm-gcc/) as I feel like it's the simplest one. TDM-GCC should add itself to PATH when installing with defualt settings.
+
+Now restart your console and you should be able to run the application now.
